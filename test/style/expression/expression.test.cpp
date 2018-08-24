@@ -30,7 +30,6 @@ TEST(Expression, IsExpression) {
     for(auto& entry : allExpressions.GetObject()) {
         const std::string name { entry.name.GetString(), entry.name.GetStringLength() };
         if (name == "line-progress" ||
-            name == "feature-state" ||
             name == "interpolate-hcl" ||
             name == "interpolate-lab" ||
             name == "format") {
