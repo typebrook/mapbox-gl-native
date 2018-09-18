@@ -25,7 +25,7 @@ import java.io.FileOutputStream
 class OfflineManagerTest : BaseActivityTest() {
 
   companion object {
-    private const val TEST_DB_FILE_NAME = "offline.db"
+    private const val TEST_DB_FILE_NAME = "barcelona.db"
   }
 
   private val context: Context by lazy { rule.activity }
