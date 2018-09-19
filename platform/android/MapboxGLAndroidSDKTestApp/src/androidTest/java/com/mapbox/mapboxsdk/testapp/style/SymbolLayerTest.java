@@ -477,7 +477,8 @@ public class SymbolLayerTest extends BaseActivityTest {
       assertEquals((String) layer.getTextField().getValue(), (String) "");
 
       layer.setProperties(textField("{token}"));
-      assertEquals(layer.getTextField().getExpression(), Expression.toString(Expression.get("token")));
+      assertEquals(layer.getTextField().getExpression(),
+         Expression.format(Expression.toString(Expression.get("token"))));
     });
   }
 
@@ -490,7 +491,7 @@ public class SymbolLayerTest extends BaseActivityTest {
       assertNotNull(layer);
 
       // Set and Get
-      Expression expression = string(Expression.get("undefined"));
+      Expression expression = Expression.format(string(Expression.get("undefined")));
       layer.setProperties(textField(expression));
       assertEquals(layer.getTextField().getExpression(), expression);
     });
