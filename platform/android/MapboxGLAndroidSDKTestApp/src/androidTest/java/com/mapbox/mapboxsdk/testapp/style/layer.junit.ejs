@@ -165,7 +165,12 @@ public class <%- camelize(type) %>LayerTest extends BaseActivityTest {
 <% if (property.tokens) { -%>
 
       layer.setProperties(<%- camelizeWithLeadingLowercase(property.name) %>("{token}"));
+<% if (property.type === 'formatted') { -%>
+      assertEquals(layer.get<%- camelize(property.name) %>().getExpression(),
+         Expression.format(Expression.toString(Expression.get("token"))));
+<% } else { -%>
       assertEquals(layer.get<%- camelize(property.name) %>().getExpression(), Expression.toString(Expression.get("token")));
+<% } -%>
 <% } -%>
     });
   }
@@ -181,7 +186,11 @@ public class <%- camelize(type) %>LayerTest extends BaseActivityTest {
       assertNotNull(layer);
 
       // Set and Get
+<% if (property.type === 'formatted') { -%>
+      Expression expression = Expression.format(<%- defaultExpressionJava(property) %>(Expression.get("undefined")));
+<% } else { -%>
       Expression expression = <%- defaultExpressionJava(property) %>(Expression.get("undefined"));
+<% } -%>
       layer.setProperties(<%- camelizeWithLeadingLowercase(property.name) %>(expression));
       assertEquals(layer.get<%- camelize(property.name) %>().getExpression(), expression);
     });
