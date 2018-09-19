@@ -23,6 +23,8 @@ public:
 
     EvaluationResult evaluate(const EvaluationContext& params) const override;
     void eachChild(const std::function<void(const Expression&)>& visit) const override;
+    
+    mbgl::Value serialize() const override;
 
     bool operator==(const Expression& e) const override;
 

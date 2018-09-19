@@ -82,6 +82,10 @@ EvaluationResult toColor(const Value& colorValue) {
     );
 }
 
+EvaluationResult toFormatted(const Value& formattedValue) {
+    return Formatted(toString(formattedValue).c_str());
+}
+
 Coercion::Coercion(type::Type type_, std::vector<std::unique_ptr<Expression>> inputs_) :
     Expression(Kind::Coercion, std::move(type_)),
     inputs(std::move(inputs_))
@@ -96,11 +100,26 @@ Coercion::Coercion(type::Type type_, std::vector<std::unique_ptr<Expression>> in
         coerceSingleValue = toNumber;
     } else if (t.is<type::StringType>()) {
         coerceSingleValue = [] (const Value& v) -> EvaluationResult { return toString(v); };
+    } else if (t.is<type::FormattedType>()) {
+        coerceSingleValue = toFormatted;
     } else {
         assert(false);
     }
 }
 
+mbgl::Value Coercion::serialize() const {
+    if (getType().is<type::FormattedType>()) {
+        // Since there's no explicit "to-formatted" coercion, the only coercions should be created
+        // by string expressions that get implicitly coerced to "formatted".
+        std::vector<mbgl::Value> serialized{{ std::string("format") }};
+        serialized.push_back(inputs[0]->serialize());
+        serialized.push_back(std::unordered_map<std::string, mbgl::Value>());
+        return serialized;
+    } else {
+        return Expression::serialize();
+    }
+};
+    
 std::string Coercion::getOperator() const {
     return getType().match(
       [](const type::BooleanType&) { return "to-boolean"; },
@@ -186,6 +205,3 @@ std::vector<optional<Value>> Coercion::possibleOutputs() const {
 } // namespace expression
 } // namespace style
 } // namespace mbgl
-
-
-
