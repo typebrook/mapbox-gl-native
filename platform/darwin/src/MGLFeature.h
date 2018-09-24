@@ -6,6 +6,7 @@
 #import "MGLPointAnnotation.h"
 #import "MGLPointCollection.h"
 #import "MGLShapeCollection.h"
+#import "MGLPointCluster.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -177,6 +178,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 MGL_EXPORT
 @interface MGLPointFeature : MGLPointAnnotation <MGLFeature>
+
+// TODO: doc
+- (id<MGLPointCluster>)cluster;
 @end
 
 /**
@@ -257,5 +261,7 @@ MGL_EXPORT
 + (instancetype)shapeCollectionWithShapes:(NSArray<MGLShape<MGLFeature> *> *)shapes;
 
 @end
+
+
 
 NS_ASSUME_NONNULL_END
