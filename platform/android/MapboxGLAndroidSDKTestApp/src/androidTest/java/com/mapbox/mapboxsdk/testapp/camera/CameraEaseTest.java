@@ -285,6 +285,8 @@ public class CameraEaseTest extends BaseActivityTest {
     validateTestSetup();
     invoke(mapboxMap, (uiController, mapboxMap) -> {
       final float zoomTo = 2.45f;
+
+      animationIdlingResource.increment();
       mapboxMap.easeCamera(CameraUpdateFactory.zoomTo(zoomTo), new MapboxMap.CancelableCallback() {
         @Override
         public void onCancel() {
