@@ -2872,7 +2872,8 @@ public class Expression {
    *
    * @param expression the expression to evaluate
    * @return expression
-   * @see <a href="https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-is-supported-script">Style specification</a>
+   * @see <a href="https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-is-supported-script">Style
+   * specification</a>
    */
   public static Expression isSupportedScript(Expression expression) {
     return new Expression("is-supported-script", expression);
@@ -2902,7 +2903,8 @@ public class Expression {
    *
    * @param string the string to evaluate
    * @return expression
-   * @see <a href="https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-is-supported-script">Style specification</a>
+   * @see <a href="https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-is-supported-script">Style
+   * specification</a>
    */
   public static Expression isSupportedScript(String string) {
     return new Expression("is-supported-script", literal(string));
@@ -3224,9 +3226,37 @@ public class Expression {
     return new Expression("collator", new ExpressionMap(map));
   }
 
-  public static Expression format(Expression input) {
-    Map<String, Expression> map = new HashMap<>();
-    return new Expression("format", input, new ExpressionMap(map));
+  public static Expression format(Expression... expressions) {
+    if (expressions.length == 0 || expressions.length % 3 != 0) {
+      throw new IllegalArgumentException("\"format\""); //todo exception format
+    }
+
+    Expression[] mappedExpressions = new Expression[expressions.length / 3 * 2];
+    for (int i = 0; i < expressions.length; i += 3) {
+      // for reach iteration we are consolidating two fields
+      int mappedIndex = i - (i / 3);
+
+      // input
+      mappedExpressions[mappedIndex] = expressions[i];
+
+      Expression fontScale = expressions[i + 1];
+      Expression textFont = expressions[i + 2];
+
+      // parameters
+      Map<String, Expression> map = new HashMap<>();
+
+      if (fontScale != null) {
+        map.put("font-scale", fontScale);
+      }
+
+      if (textFont != null) {
+        map.put("text-font", textFont);
+      }
+
+      mappedExpressions[mappedIndex + 1] = new ExpressionMap(map);
+    }
+
+    return new Expression("format", mappedExpressions);
   }
 
   /**

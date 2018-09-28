@@ -3,8 +3,8 @@ package com.mapbox.mapboxsdk.style.expressions;
 import android.graphics.Color;
 
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
-
 import com.mapbox.mapboxsdk.style.layers.PropertyValue;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -35,6 +35,7 @@ import static com.mapbox.mapboxsdk.style.expressions.Expression.e;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.floor;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.format;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.geometryType;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.gt;
@@ -1402,5 +1403,65 @@ public class ExpressionTest {
     Object[] expected = new Object[] {"is-supported-script", new Object[] {"get", "property_name"}};
     Object[] actual = isSupportedScript(get("property_name")).toArray();
     assertTrue("expression should match", Arrays.deepEquals(expected, actual));
+  }
+
+  @Test
+  public void testFormatSingleArgument() {
+    Object[] expected = new Object[] {"format", "test",
+      new HashMap<String, Object>() {
+        {
+          put("font-scale", 1.5f);
+          put("text-font", "awesome");
+        }
+      }};
+    Object[] actual = format(literal("test"), literal(1.5), literal("awesome")).toArray();
+    assertTrue("expression should match", Arrays.deepEquals(expected, actual));
+  }
+
+  @Test
+  public void testFormatMultipleArgument() {
+    Object[] expected = new Object[] {
+      "format",
+      "test",
+      new HashMap<String, Object>() {
+        {
+          put("text-font", "awesome");
+        }
+      },
+      "test2",
+      new HashMap<String, Object>() {
+        {
+          put("font-scale", 1.5f);
+        }
+      },
+      "test3",
+      new HashMap<String, Object>() {
+        {
+        }
+      },
+      "test4",
+      new HashMap<String, Object>() {
+        {
+          put("font-scale", 1.5f);
+          put("text-font", "awesome");
+        }
+      }};
+    Object[] actual = format(
+      literal("test"), null, literal("awesome"),
+      literal("test2"), literal(1.5), null,
+      literal("test3"), null, null,
+      literal("test4"), literal(1.5), literal("awesome")
+    ).toArray();
+    assertTrue("expression should match", Arrays.deepEquals(expected, actual));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testFormatWrongNumberOfArguments() {
+    format(literal("test"), null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testFormatNoArguments() {
+    format();
   }
 }

@@ -1,14 +1,17 @@
 package com.mapbox.mapboxsdk.testapp.style;
 
 import android.graphics.Color;
+import android.support.test.espresso.UiController;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.style.expressions.Expression;
 import com.mapbox.mapboxsdk.style.layers.CircleLayer;
 import com.mapbox.mapboxsdk.style.layers.FillLayer;
 import com.mapbox.mapboxsdk.style.layers.Layer;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.style.sources.Source;
 import com.mapbox.mapboxsdk.testapp.R;
@@ -27,6 +30,7 @@ import timber.log.Timber;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.collator;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.eq;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.exponential;
+import static com.mapbox.mapboxsdk.style.expressions.Expression.format;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.get;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.interpolate;
 import static com.mapbox.mapboxsdk.style.expressions.Expression.literal;
@@ -43,6 +47,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillAntialias;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOutlineColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField;
 import static com.mapbox.mapboxsdk.testapp.action.MapboxMapAction.invoke;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -220,7 +225,6 @@ public class ExpressionTest extends BaseActivityTest {
   @Test
   public void testCollatorExpression() {
     validateTestSetup();
-    setupStyle();
     invoke(mapboxMap, (uiController, mapboxMap) -> {
       LatLng latLng = new LatLng(51, 17);
 
@@ -263,6 +267,110 @@ public class ExpressionTest extends BaseActivityTest {
       assertFalse(mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer")
         .isEmpty());
     });
+  }
+
+  @Test
+  public void testFormatExpressionNoParams() {
+    validateTestSetup();
+    invoke(mapboxMap, (uiController, mapboxMap) -> {
+      LatLng latLng = new LatLng(51, 17);
+      mapboxMap.addSource(new GeoJsonSource("source", Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude())));
+      SymbolLayer layer = new SymbolLayer("layer", "source");
+      mapboxMap.addLayer(layer);
+
+      Expression expression = format(literal("test"), null, null);
+      layer.setProperties(textField(expression));
+      waitForLayer(uiController, mapboxMap, latLng);
+      assertFalse(mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer")
+        .isEmpty());
+
+      assertEquals(expression, layer.getTextField().getExpression());
+    });
+  }
+
+  @Test
+  public void testFormatExpressionFontScaleParam() {
+    validateTestSetup();
+    invoke(mapboxMap, (uiController, mapboxMap) -> {
+      LatLng latLng = new LatLng(51, 17);
+      mapboxMap.addSource(new GeoJsonSource("source", Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude())));
+      SymbolLayer layer = new SymbolLayer("layer", "source");
+      mapboxMap.addLayer(layer);
+
+      Expression expression = format(literal("test"), null, null);
+      layer.setProperties(textField(expression));
+      waitForLayer(uiController, mapboxMap, latLng);
+      assertFalse(mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer")
+        .isEmpty());
+
+      assertEquals(expression, layer.getTextField().getExpression());
+    });
+  }
+
+  @Test
+  public void testFormatExpressionTextFontParam() {
+    validateTestSetup();
+    invoke(mapboxMap, (uiController, mapboxMap) -> {
+      LatLng latLng = new LatLng(51, 17);
+      mapboxMap.addSource(new GeoJsonSource("source", Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude())));
+      SymbolLayer layer = new SymbolLayer("layer", "source");
+      mapboxMap.addLayer(layer);
+
+      Expression expression = format(literal("test"), null, literal(new String[] {"DIN Offc Pro Regular"}));
+      layer.setProperties(textField(expression));
+      waitForLayer(uiController, mapboxMap, latLng);
+      assertFalse(mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer")
+        .isEmpty());
+
+      assertEquals(expression, layer.getTextField().getExpression());
+    });
+  }
+
+  @Test
+  public void testFormatExpressionAllParams() {
+    validateTestSetup();
+    invoke(mapboxMap, (uiController, mapboxMap) -> {
+      LatLng latLng = new LatLng(51, 17);
+      mapboxMap.addSource(new GeoJsonSource("source", Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude())));
+      SymbolLayer layer = new SymbolLayer("layer", "source");
+      mapboxMap.addLayer(layer);
+
+      Expression expression = format(literal("test"), literal(0.5), literal(new String[] {"DIN Offc Pro Regular"}));
+      layer.setProperties(textField(expression));
+      waitForLayer(uiController, mapboxMap, latLng);
+      assertFalse(mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer")
+        .isEmpty());
+
+      assertEquals(expression, layer.getTextField().getExpression());
+    });
+  }
+
+  @Test
+  public void testFormatExpressionMultipleInputs() {
+    validateTestSetup();
+    invoke(mapboxMap, (uiController, mapboxMap) -> {
+      LatLng latLng = new LatLng(51, 17);
+      mapboxMap.addSource(new GeoJsonSource("source", Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude())));
+      SymbolLayer layer = new SymbolLayer("layer", "source");
+      mapboxMap.addLayer(layer);
+
+      Expression expression = format(
+        literal("test"), literal(1.5), literal(new String[] {"DIN Offc Pro Regular"}),
+        literal("\ntest2"), literal(2), null
+      );
+      layer.setProperties(textField(expression));
+      waitForLayer(uiController, mapboxMap, latLng);
+      assertFalse(mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer")
+        .isEmpty());
+
+      assertEquals(expression, layer.getTextField().getExpression());
+    });
+  }
+
+  private static void waitForLayer(UiController uiController, MapboxMap mapboxMap, LatLng latLng) {
+    while (mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer").isEmpty()) {
+      uiController.loopMainThreadForAtLeast(150L);
+    }
   }
 
   private void setupStyle() {
