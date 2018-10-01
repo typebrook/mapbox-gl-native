@@ -367,6 +367,8 @@ public class ExpressionTest extends BaseActivityTest {
     });
   }
 
+  // TODO: 01/10/2018 variable format expression test
+
   private static void waitForLayer(UiController uiController, MapboxMap mapboxMap, LatLng latLng) {
     while (mapboxMap.queryRenderedFeatures(mapboxMap.getProjection().toScreenLocation(latLng), "layer").isEmpty()) {
       uiController.loopMainThreadForAtLeast(150L);

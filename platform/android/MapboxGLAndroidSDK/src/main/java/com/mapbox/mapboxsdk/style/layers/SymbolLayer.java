@@ -13,6 +13,7 @@ import static com.mapbox.mapboxsdk.utils.ColorUtils.rgbaToColor;
 import com.google.gson.JsonArray;
 import com.mapbox.mapboxsdk.style.expressions.Expression;
 import com.mapbox.mapboxsdk.style.layers.TransitionOptions;
+import com.mapbox.mapboxsdk.style.types.Formatted;
 
 /**
  * An icon or a text label.
@@ -363,9 +364,9 @@ public class SymbolLayer extends Layer {
    * @return property wrapper value around String
    */
   @SuppressWarnings("unchecked")
-  public PropertyValue<String> getTextField() {
+  public PropertyValue<Formatted> getTextField() {
     checkThread();
-    return (PropertyValue<String>) new PropertyValue("text-field", nativeGetTextField());
+    return (PropertyValue<Formatted>) new PropertyValue("text-field", nativeGetTextField());
   }
 
   /**
