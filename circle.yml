@@ -854,6 +854,9 @@ jobs:
           name: Lint plist files
           command: make ios-lint
       - run:
+          name: Check symbol namespacing for mapbox-events-ios
+          command: make ios-check-events-symbols
+      - run:
           name: Nitpick Darwin code generation
           command: scripts/nitpick/generated-code.js darwin
       - save-dependencies
